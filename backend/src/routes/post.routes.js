@@ -1,4 +1,5 @@
 import express from "express";
+import identifyUser from "../middlewares/auth.middleware.js";
 import { createPost, getPosts, getPostDetails } from "../controllers/post.controller.js";
 import multer from "multer";
 
@@ -13,19 +14,19 @@ const postRouter = express.Router();
  *  - req.body = {caption, image-file}
  * /api/posts
  */
-postRouter.post("/create", upload.single("image"), createPost);
+postRouter.post("/create", identifyUser, upload.single("image"), createPost);
 
 /**
  * GET /api/posts [protected]
  *  - req.body = {}
  * /api/posts
  */
-postRouter.get("/getPosts", getPosts)
+postRouter.get("/getPosts", identifyUser, getPosts)
 
 /**
  * GET /api/posts/details/:id
  * return details about the post with given id
  */
-postRouter.get("/details/:postid", getPostDetails)
+postRouter.get("/details/:postid", identifyUser, getPostDetails)
 
 export default postRouter;

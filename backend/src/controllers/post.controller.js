@@ -12,24 +12,7 @@ const imagekit = new IMAGEKIT({
 
 async function createPost(req, res) {
 
-    const token = req.cookies.token;
-
-    console.log(token);
-
-    if (!token) {
-        return res.status(401).json({
-            message: "Unauthorized"
-        });
-    }
-    let decodedToken;
-    try {
-        decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-        return res.status(401).json({
-            message: "Unauthorized"
-        });
-    }
-
+    const userId = req.user.sub;
 
     const file = await imagekit.files.upload({
         file: await toFile(Buffer.from(req.file.buffer), 'file'),
@@ -42,7 +25,7 @@ async function createPost(req, res) {
     const post = await postModel.create({
         caption,
         imgUrl: file.url,
-        user: decodedToken.sub
+        user: userId
     });
 
     res.status(201).json({
@@ -53,26 +36,13 @@ async function createPost(req, res) {
             imgUrl: post.imgUrl
         }
     });
-
-
 }
 async function getPosts(req, res) {
 
-    const token = req.cookies.token;
-
-    let decoded = null;
-
-    try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-    }
-    catch (error) {
-        return res.status(401).json({
-            message: "Unauthorized!!"
-        })
-    }
+    const userId = req.user.sub;
 
     const posts = await postModel.find({
-        user: decoded.sub
+        user: userId
     });
 
     if (posts.length !== 0) {
@@ -88,33 +58,10 @@ async function getPosts(req, res) {
 
 }
 async function getPostDetails(req, res) {
-    const token = req.cookies.token;
-    const { postid } = req.params;
 
-    if (!token) {
-        return res.status(401).json({
-            message: "Unauthorized!!"
-        })
-    }
+    const userId = req.user.sub;
 
-    if (!/^[a-f\d]{24}$/i.test(postid)) {
-        return res.status(400).json({
-            message: "Invalid post ID"
-        });
-    }
-
-    let decoded = null;
-
-    try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-        console.log(error);
-        return res.status(401).json({
-            message: "Invalid token!!"
-        })
-    }
-
-    const userId = decoded.sub;
+    const postid = req.params.postid;
 
     const post = await postModel.findById(postid);
 
