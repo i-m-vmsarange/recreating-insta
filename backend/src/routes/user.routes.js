@@ -1,6 +1,6 @@
 import express from "express";
 import identifyUser from "../middlewares/auth.middleware.js";
-import { followUser } from "../controllers/user.controller.js";
+import { fetchFollowers, followUser } from "../controllers/user.controller.js";
 const userRouter = express.Router();
 
 /**
@@ -11,4 +11,10 @@ const userRouter = express.Router();
 
 userRouter.post("/follow/:username", identifyUser, followUser);
 
+/**
+ * @route GET api/users/followers/:username
+ * @description find f`ollowers
+ * @access Private
+ */
+userRouter.get("/followers/:username", identifyUser, fetchFollowers);
 export default userRouter;

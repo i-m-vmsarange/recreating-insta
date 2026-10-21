@@ -29,10 +29,7 @@ async function followUser(req, res) {
   }
 
   const isAlreadyFollowing = await followModel.findOne({
-    $and: {
-      follower,
-      followee: dbUser._id,
-    },
+    $and: [{ follower: follower.toString() }, { followee: dbUser._id }],
   });
 
   if (isAlreadyFollowing) {
@@ -51,5 +48,35 @@ async function followUser(req, res) {
     followRecord,
   });
 }
-async function fetchFollowers(req, res) {}
+async function fetchFollowers(req, res) {
+  const username = req.params.username;
+
+  if (!username) {
+    return res.status(404).json({
+      message: "Please enter a valid username!!!",
+    });
+  }
+
+  const dbUser = await userModel.findOne({
+    username,
+  });
+
+  if (!dbUser) {
+    return res.status(404).json({
+      message: "User with given username does not exist!!!",
+    });
+  }
+
+  const userFollowers = await followModel
+    .find({ followee: dbUser._id })
+    .populate("follower", "username profileImg");
+
+  return res.status(200).json({
+    message: `${username} followers are:`,
+    userFollowers: userFollowers
+      .filter((follow) => follow.follower)
+      .map((follow) => follow.follower),
+  });
+}
+
 export { followUser, fetchFollowers };
