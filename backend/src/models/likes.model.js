@@ -20,4 +20,10 @@ likeSchema.index({ post: 1, user: 1 }, { unique: true });
 
 const likeModel = mongoose.model("likes", likeSchema);
 
+likeModel.createIndexes().then(() => {
+    console.log("Indexes created successfully for likes collection");
+}).catch((error) => {
+    console.log("Error while creating indexes for likes collection", error);
+})
+
 export default likeModel;

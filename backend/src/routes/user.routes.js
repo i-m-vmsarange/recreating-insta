@@ -17,4 +17,6 @@ userRouter.post("/follow/:username", identifyUser, followUser);
  * @access Private
  */
 userRouter.get("/followers/:username", identifyUser, fetchFollowers);
+
+
 export default userRouter;
