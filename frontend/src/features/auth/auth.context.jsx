@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await login(username, password);
-      console.log(response);
       setUser(response.user);
+      return response;
     } catch (error) {
       console.error("Error logging in:", error);
     } finally {

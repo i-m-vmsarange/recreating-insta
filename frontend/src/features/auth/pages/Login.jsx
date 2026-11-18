@@ -8,12 +8,22 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { handleLogin } = useAuth();
+  const { handleLogin, loading } = useAuth();
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleLogin(username, password);
-    navigate("/");
+    handleLogin(username, password).then((response) => {
+      if (response && response.user) {
+        console.log("Login successful:", response.user);
+        navigate("/");
+      } else {
+        console.error("Login failed");
+      }
+    });
   };
 
   return (
