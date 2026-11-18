@@ -2,33 +2,20 @@ import React from "react";
 import "../styles/styles.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import { useAuth } from "../hooks/useAuth.jsx";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { handleLogin } = useAuth();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await axios.post(
-        "http://localhost:3000/api/auth/login",
-        {
-          identifier: username,
-          password,
-        },
-        {
-          withCredentials: true,
-        },
-      );
-      navigate("/");
-    } catch (error) {
-      console.log("Error in logging in User:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleLogin(username, password);
+    navigate("/");
   };
+
   return (
     <main>
       <div className="form-container">

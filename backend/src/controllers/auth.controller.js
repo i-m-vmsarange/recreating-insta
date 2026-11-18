@@ -93,5 +93,17 @@ async function loginUser(req, res) {
         user: dbUser,
     });
 }
+async function getMe(req, res) {
+    const userId = req.user.sub;
 
-export { registerUser, loginUser };
+    const dbUser = await userModel.findById(userId);
+
+    res.status(200).json({
+        user: {
+            username: dbUser.username,
+            email: dbUser.email,
+            bio: dbUser.bio
+        }
+    })
+}
+export { registerUser, loginUser, getMe };
