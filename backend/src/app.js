@@ -3,11 +3,15 @@ import authRouter from "./routes/auth.routes.js";
 import postRouter from "./routes/post.routes.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
-
+import cors from "cors";
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+    credentials: true,
+    origin: "http://localhost:5173"
+}));
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/users", userRouter);
