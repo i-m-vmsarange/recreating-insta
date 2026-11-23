@@ -118,5 +118,19 @@ async function likePost(req, res) {
     })
 
 }
+async function getFeeds(req, res) {
 
-export { createPost, getPosts, getPostDetails, likePost };
+    const posts = await postModel.find().populate("user").sort({ createdAt: -1 }).limit(10);
+
+    if (posts.length === 0) {
+        return res.status(404).json({
+            message: "No posts found!!!"
+        })
+    }
+
+    return res.status(200).json({
+        message: "Posts fetched successfully!!!",
+        posts
+    })
+}
+export { createPost, getPosts, getPostDetails, likePost, getFeeds };
